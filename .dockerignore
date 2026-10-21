@@ -1,0 +1,10 @@
+.git
+node_modules
+data
+dist
+.env
+.env.*
+*.sqlite*
+docs
+tests
+.tools

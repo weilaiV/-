@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3001"
+    environment:
+      NODE_ENV: production
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:?Set an HTTPS origin in .env}
+      SETUP_TOKEN: ${SETUP_TOKEN:?Set a random secret of at least 32 characters}
+    volumes:
+      - keran-data:/app/data
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  keran-data:
