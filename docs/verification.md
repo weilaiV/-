@@ -3,6 +3,7 @@
 ## 自动验证
 
 - `npm test`：11 项通过，0 失败。
+- `npm run check` 与 `npm run build` 通过；首个 GitHub Actions 运行 [Quality checks #1](https://github.com/weilaiV/-/actions/runs/39569139442) 成功。
 - 核算整数分、非法金额、日期、CSV BOM 与引号、批次内重复、等长前期、零基数。
 - 真实 HTTP 流程：首次初始化、账号会话、匿名拒绝、只读越权拒绝、Origin 拒绝、退出失效。
 - 导入：非法行拒绝、数据库自然键冲突时整批回滚、演示/真实数据隔离。
