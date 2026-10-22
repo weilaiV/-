@@ -28,6 +28,85 @@ const mime = {
   ".png": "image/png",
   ".ico": "image/x-icon",
 };
+const panels = [
+  "metrics",
+  "costs",
+  "todos",
+  "trend",
+  "structure",
+  "channels",
+  "shops",
+  "products",
+  "health",
+  "highlights",
+  "issues",
+  "followups",
+];
+const recordSelect =
+  "r.*,r.refund_only AS refundOnly,r.return_refunds AS returnRefunds,i.is_demo";
+function comparison(current, previous) {
+  return previous.netSales > 0
+    ? ((current.netSales - previous.netSales) / previous.netSales) * 100
+    : null;
+}
+function groupSummaries(rows, before, key) {
+  const currentGroups = Object.groupBy(rows, (row) => row[key]);
+  const previousGroups = Object.groupBy(before, (row) => row[key]);
+  return [
+    ...new Set([...Object.keys(currentGroups), ...Object.keys(previousGroups)]),
+  ]
+    .map((name) => {
+      const current = summarize(currentGroups[name] || []);
+      const previous = summarize(previousGroups[name] || []);
+      return {
+        name,
+        ...current,
+        previous,
+        change: comparison(current, previous),
+      };
+    })
+    .sort((a, b) => b.netSales - a.netSales);
+}
+function shopAlerts(rows, before) {
+  const key = (row) => JSON.stringify([row.channel, row.shop]);
+  const currentGroups = Object.groupBy(rows, key);
+  const previousGroups = Object.groupBy(before, key);
+  const alerts = [];
+  for (const id of new Set([
+    ...Object.keys(currentGroups),
+    ...Object.keys(previousGroups),
+  ])) {
+    const current = summarize(currentGroups[id] || []);
+    const previous = summarize(previousGroups[id] || []);
+    if (!previousGroups[id]?.length) continue;
+    const reasons = [];
+    if (previous.netSales > 0 && current.netSales < previous.netSales)
+      reasons.push("净销售额较前期下降");
+    if (current.netProfit < previous.netProfit)
+      reasons.push("预估净利较前期下降");
+    if (
+      Math.round(current.refundRate * 100) >
+      Math.round(previous.refundRate * 100)
+    )
+      reasons.push("退款占比较前期上升");
+    if (reasons.length) {
+      const [channel, shop] = JSON.parse(id);
+      alerts.push({
+        id,
+        channel,
+        shop,
+        reasons,
+        severity:
+          current.netProfit < 0 || reasons.length === 3
+            ? "severe"
+            : "attention",
+        current,
+        previous,
+      });
+    }
+  }
+  return alerts;
+}
 async function bodyJson(req) {
   let size = 0;
   const chunks = [];
@@ -89,7 +168,7 @@ export function createApp({
   function rowsBetween(start, end, channel) {
     return db
       .prepare(
-        "SELECT r.*,i.is_demo FROM records r JOIN imports i ON i.id=r.import_id WHERE date BETWEEN ? AND ? AND (? = '' OR channel = ?) ORDER BY date,id",
+        `SELECT ${recordSelect} FROM records r JOIN imports i ON i.id=r.import_id WHERE date BETWEEN ? AND ? AND (? = '' OR channel = ?) ORDER BY date,r.id`,
       )
       .all(start, end, channel, channel);
   }
@@ -246,14 +325,37 @@ export function createApp({
         res.setHeader("set-cookie", cookie(""));
         return send(res, 200, { ok: true });
       }
+      if (path === "/api/preferences" && method === "GET") {
+        const saved = db
+          .prepare("SELECT json FROM user_preferences WHERE user_id=?")
+          .get(user.id);
+        return send(
+          res,
+          200,
+          saved ? JSON.parse(saved.json) : { visiblePanels: panels },
+        );
+      }
+      if (path === "/api/preferences" && method === "POST") {
+        const body = await bodyJson(req);
+        if (
+          Object.keys(body).length !== 1 ||
+          !Array.isArray(body.visiblePanels) ||
+          body.visiblePanels.some((panel) => !panels.includes(panel)) ||
+          new Set(body.visiblePanels).size !== body.visiblePanels.length
+        )
+          throw new AppError(
+            "工作台配置必须只包含有效且不重复的 visiblePanels",
+          );
+        db.prepare(
+          "INSERT INTO user_preferences(user_id,json) VALUES (?,?) ON CONFLICT(user_id) DO UPDATE SET json=excluded.json",
+        ).run(user.id, JSON.stringify(body));
+        return send(res, 200, body);
+      }
       if (path === "/api/overview" && method === "GET") {
         const { start, end, previous, channel } = range(url);
         const rows = rowsBetween(start, end, channel);
         const before = rowsBetween(previous.start, previous.end, channel);
-        const grouped = (key) =>
-          Object.entries(Object.groupBy(rows, (r) => r[key]))
-            .map(([name, items]) => ({ name, ...summarize(items) }))
-            .sort((a, b) => b.netSales - a.netSales);
+        const grouped = (key) => groupSummaries(rows, before, key);
         const dates = Object.groupBy(rows, (r) => r.date);
         const trend = [];
         for (
@@ -272,6 +374,10 @@ export function createApp({
           channels: grouped("channel"),
           shops: grouped("shop"),
           products: grouped("product"),
+          dataBounds: db
+            .prepare("SELECT MIN(date) start,MAX(date) end FROM records")
+            .get(),
+          alerts: shopAlerts(rows, before),
           availableChannels: db
             .prepare("SELECT DISTINCT channel FROM records ORDER BY channel")
             .all()
@@ -291,9 +397,25 @@ export function createApp({
           Math.min(100000, parseInt(url.searchParams.get("page"), 10) || 1),
         );
         const search = (url.searchParams.get("search") || "").slice(0, 100);
+        const shop = url.searchParams.get("shop") || "";
+        const product = url.searchParams.get("product") || "";
+        if (shop.length > 200 || product.length > 200)
+          throw new AppError("店铺或商品筛选无效");
         const where =
-          "date BETWEEN ? AND ? AND (? = '' OR channel = ?) AND (? = '' OR instr(shop,?)>0 OR instr(product,?)>0)";
-        const args = [start, end, channel, channel, search, search, search];
+          "date BETWEEN ? AND ? AND (? = '' OR channel = ?) AND (? = '' OR shop = ?) AND (? = '' OR product = ?) AND (? = '' OR instr(shop,?)>0 OR instr(product,?)>0)";
+        const args = [
+          start,
+          end,
+          channel,
+          channel,
+          shop,
+          shop,
+          product,
+          product,
+          search,
+          search,
+          search,
+        ];
         const total = Number(
           db
             .prepare(`SELECT COUNT(*) n FROM records WHERE ${where}`)
@@ -301,7 +423,7 @@ export function createApp({
         );
         const records = db
           .prepare(
-            `SELECT r.*,i.is_demo FROM records r JOIN imports i ON i.id=r.import_id WHERE ${where} ORDER BY date DESC,r.id DESC LIMIT 20 OFFSET ?`,
+            `SELECT ${recordSelect} FROM records r JOIN imports i ON i.id=r.import_id WHERE ${where} ORDER BY date DESC,r.id DESC LIMIT 20 OFFSET ?`,
           )
           .all(...args, (page - 1) * 20);
         return send(res, 200, { records, total, page, pageSize: 20 });

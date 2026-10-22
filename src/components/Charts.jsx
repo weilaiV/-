@@ -16,11 +16,11 @@ export function TrendChart({ data }) {
     <div className="trend-chart">
       <div className="chart-legend">
         <span>
-          <i style={{ background: "#b58a3c" }} />
+          <i style={{ background: "#74afea" }} />
           销售额
         </span>
         <span>
-          <i style={{ background: "#67938c" }} />
+          <i style={{ background: "#c79b45" }} />
           净销售额
         </span>
         <small>单位：万元</small>
@@ -28,12 +28,12 @@ export function TrendChart({ data }) {
       <svg
         viewBox={`0 0 ${w} ${h}`}
         role="img"
-        aria-label="每日销售额与净销售额趋势"
+        aria-label="所选粒度的销售额与净销售额趋势"
       >
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#b58a3c" stopOpacity=".18" />
-            <stop offset="100%" stopColor="#b58a3c" stopOpacity="0" />
+            <stop offset="0%" stopColor="#74afea" stopOpacity=".18" />
+            <stop offset="100%" stopColor="#74afea" stopOpacity="0" />
           </linearGradient>
         </defs>
         {ticks.map((t) => (
@@ -58,14 +58,14 @@ export function TrendChart({ data }) {
         <polyline
           points={points("sales")}
           fill="none"
-          stroke="#b58a3c"
+          stroke="#74afea"
           strokeWidth="2.7"
           strokeLinejoin="round"
         />
         <polyline
           points={points("netSales")}
           fill="none"
-          stroke="#67938c"
+          stroke="#c79b45"
           strokeWidth="2.2"
           strokeLinejoin="round"
         />
@@ -100,14 +100,14 @@ export function TrendChart({ data }) {
               y1="12"
               x2={x(hover)}
               y2={y(0)}
-              stroke="#b58a3c"
+              stroke="#74afea"
               strokeDasharray="3 3"
             />
             <circle
               cx={x(hover)}
               cy={y(data[hover].sales)}
               r="4"
-              fill="#b58a3c"
+              fill="#74afea"
             />
           </g>
         )}
@@ -115,7 +115,7 @@ export function TrendChart({ data }) {
       <div className="chart-tooltip" aria-live="polite">
         {hover !== null && data[hover]
           ? `${data[hover].date}　销售额 ${money(data[hover].sales)}　净销售额 ${money(data[hover].netSales)}`
-          : "将鼠标移至曲线查看每日数据"}
+          : "将鼠标移至曲线查看所选周期数据"}
       </div>
     </div>
   );

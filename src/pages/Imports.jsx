@@ -27,9 +27,9 @@ export default function Imports({ onImported, hasDemo, clearDemo }) {
   }, []);
   function template() {
     const csv =
-      "\uFEFF日期,渠道,店铺,商品,销售额,退款额,产品成本,广告费,平台费,运费\r\n" +
+      "\uFEFF日期,渠道,店铺,商品,销售额,退款额,产品成本,广告费,平台费,运费,仅退款,退货退款,奖励\r\n" +
       today() +
-      ",天猫,示例店铺,示例商品,1000.00,50.00,500.00,30.00,10.00,15.00\r\n";
+      ",天猫,示例店铺,示例商品,1000.00,50.00,500.00,30.00,10.00,15.00,30.00,20.00,5.00\r\n";
     const url = URL.createObjectURL(
       new Blob([csv], { type: "text/csv;charset=utf-8;" }),
     );
@@ -227,7 +227,10 @@ export default function Imports({ onImported, hasDemo, clearDemo }) {
             </li>
             <li>
               <b>保留完整模板表头</b>
-              <p>请使用 CSV UTF-8 格式。任何一行校验失败，整批均不会保存。</p>
+              <p>
+                请使用 CSV UTF-8
+                格式。原有10列表头仍可使用。仅退款、退货退款、奖励为可选列；两类退款须同时填写，且合计等于退款额。缺失字段会显示为未提供。任何一行校验失败，整批均不会保存。
+              </p>
             </li>
           </ol>
         </Panel>

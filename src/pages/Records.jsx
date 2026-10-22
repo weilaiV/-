@@ -9,7 +9,12 @@ import {
   Pagination,
   Panel,
 } from "../components/ui";
-export default function Records({ filters, revision }) {
+export default function Records({
+  filters,
+  revision,
+  scope = {},
+  onClearScope,
+}) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [committed, setCommitted] = useState("");
@@ -17,12 +22,12 @@ export default function Records({ filters, revision }) {
   const [error, setError] = useState("");
   useEffect(() => {
     setPage(1);
-  }, [filters, committed]);
+  }, [filters, committed, scope]);
   useEffect(() => {
     let active = true;
     setData(null);
     setError("");
-    api("/records" + query({ ...filters, page, search: committed }))
+    api("/records" + query({ ...filters, ...scope, page, search: committed }))
       .then((r) => {
         if (active) setData(r);
       })
@@ -32,13 +37,26 @@ export default function Records({ filters, revision }) {
     return () => {
       active = false;
     };
-  }, [filters, page, committed, revision]);
+  }, [filters, page, committed, revision, scope]);
   return (
     <Panel
       title="经营明细"
       icon={FileText}
       extra={<span className="tag neutral">按日 · 店铺 · 商品</span>}
     >
+      {(scope.shop || scope.product || scope.channel) && (
+        <div className="record-scope">
+          <span>
+            当前下钻：
+            {[scope.channel, scope.shop, scope.product]
+              .filter(Boolean)
+              .join(" / ")}
+          </span>
+          <button className="text-button" onClick={onClearScope}>
+            清除下钻筛选
+          </button>
+        </div>
+      )}
       <form
         className="search-row"
         onSubmit={(e) => {
@@ -83,13 +101,19 @@ export default function Records({ filters, revision }) {
               "销售额",
               "退款额",
               "产品成本",
+              "奖励",
               "经营费用",
               "预估净利",
             ]}
           >
             {data.records.map((row) => {
               const expenses = row.ads + row.platform + row.shipping;
-              const net = row.sales - row.refunds - row.cost - expenses;
+              const net =
+                row.sales -
+                row.refunds -
+                row.cost -
+                expenses +
+                (row.rewards || 0);
               return (
                 <tr key={row.id}>
                   <td>{row.date}</td>
@@ -103,6 +127,9 @@ export default function Records({ filters, revision }) {
                   <td>{money(row.sales, 2)}</td>
                   <td>{money(row.refunds, 2)}</td>
                   <td>{money(row.cost, 2)}</td>
+                  <td>
+                    {row.rewards == null ? "未导入" : money(row.rewards, 2)}
+                  </td>
                   <td
                     title={`广告费 ${money(row.ads, 2)} / 平台费 ${money(row.platform, 2)} / 运费 ${money(row.shipping, 2)}`}
                   >

@@ -20,6 +20,11 @@ export const moneyFields = [
   "platform",
   "shipping",
 ];
+export const optionalColumns = {
+  仅退款: "refundOnly",
+  退货退款: "returnRefunds",
+  奖励: "rewards",
+};
 export class AppError extends Error {
   constructor(message, status = 400) {
     super(message);
@@ -71,6 +76,18 @@ export function validateRows(rows) {
         input[key],
         prefix + Object.keys(columns).find((label) => columns[label] === key),
       );
+    for (const [label, key] of Object.entries(optionalColumns))
+      row[key] =
+        input[key] == null || String(input[key]).trim() === ""
+          ? null
+          : cents(input[key], prefix + label);
+    if ((row.refundOnly === null) !== (row.returnRefunds === null))
+      throw new AppError(prefix + "仅退款和退货退款必须成对提供");
+    if (
+      row.refundOnly !== null &&
+      row.refundOnly + row.returnRefunds !== row.refunds
+    )
+      throw new AppError(prefix + "仅退款与退货退款之和必须等于退款额");
     if (row.refunds > row.sales)
       throw new AppError(prefix + "退款额不能超过销售额");
     const naturalKey = JSON.stringify([
@@ -99,13 +116,15 @@ export function parseCsv(csv) {
       trim: true,
       columns(headers) {
         const required = Object.keys(columns);
+        const allowed = { ...columns, ...optionalColumns };
         if (
-          headers.length !== required.length ||
           new Set(headers).size !== headers.length ||
-          required.some((h) => !headers.includes(h))
+          required.some((h) => !headers.includes(h)) ||
+          headers.some((h) => !Object.hasOwn(allowed, h)) ||
+          headers.includes("仅退款") !== headers.includes("退货退款")
         )
           throw new Error("表头需完整匹配模板");
-        return headers.map((h) => columns[h]);
+        return headers.map((h) => allowed[h]);
       },
       max_record_size: 10000,
     });
@@ -118,10 +137,26 @@ export function summarize(rows) {
   const totals = Object.fromEntries(moneyFields.map((key) => [key, 0]));
   for (const row of rows)
     for (const key of moneyFields) totals[key] += row[key];
+  totals.fieldCoverage = {};
+  for (const key of Object.values(optionalColumns)) {
+    const provided = rows.filter((row) => row[key] != null);
+    totals.fieldCoverage[key] = {
+      provided: provided.length,
+      total: rows.length,
+    };
+    totals[key] =
+      rows.length && provided.length === rows.length
+        ? provided.reduce((sum, row) => sum + row[key], 0)
+        : null;
+  }
   totals.netSales = totals.sales - totals.refunds;
   totals.grossProfit = totals.netSales - totals.cost;
   totals.netProfit =
-    totals.grossProfit - totals.ads - totals.platform - totals.shipping;
+    totals.grossProfit -
+    totals.ads -
+    totals.platform -
+    totals.shipping +
+    rows.reduce((sum, row) => sum + (row.rewards ?? 0), 0);
   totals.grossMargin = totals.netSales
     ? (totals.grossProfit / totals.netSales) * 100
     : 0;
@@ -175,13 +210,18 @@ export function demoRows() {
             (1 + (90 - d) * 0.003) *
             100,
         );
+        const refunds = Math.round(sales * 0.046);
+        const refundOnly = Math.round(refunds * 0.35);
         rows.push({
           date,
           channel: shops[s][0],
           shop: shops[s][1],
           product: products[p],
           sales,
-          refunds: Math.round(sales * 0.046),
+          refunds,
+          refundOnly,
+          returnRefunds: refunds - refundOnly,
+          rewards: Math.round(sales * 0.006),
           cost: Math.round(sales * (0.51 + s * 0.022)),
           ads: Math.round(sales * 0.045),
           platform: Math.round(sales * 0.018),
