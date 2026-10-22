@@ -11,7 +11,7 @@
     "build": "vite build",
     "start": "node server/index.mjs",
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check server/app.mjs && node --check server/db.mjs && node --check server/domain.mjs && node --check server/security.mjs && node --check server/index.mjs",
+    "check": "node --check server/app.mjs && node --check server/db.mjs && node --check server/domain.mjs && node --check server/finance.mjs && node --check server/finance-domain.mjs && node --check server/security.mjs && node --check server/index.mjs",
     "seed:demo": "node scripts/seed-demo.mjs"
   },
   "dependencies": {

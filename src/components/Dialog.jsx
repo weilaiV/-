@@ -9,6 +9,8 @@ export default function Dialog({
   drawer = false,
 }) {
   const node = useRef(null);
+  const close = useRef(onClose);
+  close.current = onClose;
   useEffect(() => {
     const previous = document.activeElement;
     const overflow = document.body.style.overflow;
@@ -17,7 +19,7 @@ export default function Dialog({
     function key(event) {
       if (event.key === "Escape") {
         event.stopPropagation();
-        onClose();
+        close.current();
       }
       if (event.key === "Tab") {
         const items = [

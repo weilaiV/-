@@ -2,6 +2,7 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { AppError } from "./domain.mjs";
+import { expenseColumns } from "../src/finance-schema.mjs";
 export function openDatabase(path) {
   if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
   const db = new DatabaseSync(path);
@@ -22,6 +23,37 @@ export function openDatabase(path) {
   for (const name of ["refund_only", "return_refunds", "rewards"])
     if (!recordColumns.has(name))
       db.exec(`ALTER TABLE records ADD COLUMN ${name} INTEGER NULL`);
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS finance_expenses(
+      id INTEGER PRIMARY KEY, month TEXT NOT NULL, department TEXT NOT NULL,
+      owner_id INTEGER NOT NULL REFERENCES users(id), amounts_json TEXT NOT NULL,
+      total INTEGER NOT NULL, version INTEGER NOT NULL DEFAULT 1,
+      archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0,1)),
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+    CREATE INDEX IF NOT EXISTS finance_expenses_month ON finance_expenses(archived,month);
+    CREATE TABLE IF NOT EXISTS finance_rules(
+      id INTEGER PRIMARY KEY, name TEXT NOT NULL, expression TEXT NOT NULL,
+      tags_json TEXT NOT NULL, enabled INTEGER NOT NULL CHECK(enabled IN (0,1)),
+      version INTEGER NOT NULL DEFAULT 1,
+      archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0,1)),
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+    CREATE TABLE IF NOT EXISTS finance_settings(
+      id INTEGER PRIMARY KEY CHECK(id=1), columns_json TEXT NOT NULL,
+      version INTEGER NOT NULL DEFAULT 1);
+  `);
+  db.prepare(
+    "INSERT OR IGNORE INTO finance_settings(id,columns_json) VALUES(1,?)",
+  ).run(
+    JSON.stringify(
+      expenseColumns.map((column, order) => ({
+        ...column,
+        visible: true,
+        order,
+      })),
+    ),
+  );
   return db;
 }
 export function insertBatch(db, rows, filename, userId, isDemo = false) {

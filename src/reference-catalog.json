@@ -189,39 +189,39 @@
         {
           "title": "公司经营总览",
           "section": "公司经营",
-          "paths": ["shujufenxi"],
-          "status": "pending",
-          "source": "jb",
+          "paths": ["/shujufenxi"],
+          "status": "available-local-sources",
+          "source": "2026-10-22 原站可见目录确认",
           "titleMatches": ["数据总览", "数据分析"]
         },
         {
           "title": "核算中心",
           "section": "利润与费用",
-          "paths": ["erphesaun"],
-          "status": "pending",
-          "source": "jb",
+          "paths": ["/caiwuduizhang/erphesaun"],
+          "status": "available-local-sources",
+          "source": "2026-10-22 原站可见目录确认",
           "titleMatches": ["核算中心", "ERP核算中心"]
         },
         {
           "title": "费用管理",
           "section": "利润与费用",
-          "paths": ["expense"],
-          "status": "pending",
-          "source": "jb"
+          "paths": ["/caiwuduizhang/expense"],
+          "status": "available-local-sources",
+          "source": "2026-10-22 原站可见目录确认"
         },
         {
           "title": "资产总览",
           "section": "资金与资产",
-          "paths": ["zichanzonglan"],
+          "paths": ["/zichanzonglan"],
           "status": "pending",
-          "source": "jb"
+          "source": "2026-10-22 原站可见目录确认"
         },
         {
           "title": "账户资产",
           "section": "资金与资产",
-          "paths": ["zhanghuzichan"],
+          "paths": ["/zichanguanli/zhanghuzichan"],
           "status": "pending",
-          "source": "jb",
+          "source": "2026-10-22 原站可见目录确认",
           "titleMatches": [
             "账户资产",
             "账户余额",
@@ -233,9 +233,9 @@
         {
           "title": "欠款详情",
           "section": "财务办理",
-          "paths": ["qiankuanxiangqing", "qiankaun"],
+          "paths": ["/caiwuduizhang/qiankuanxiangqing"],
           "status": "pending",
-          "source": "jb",
+          "source": "2026-10-22 原站可见目录确认",
           "name": "ReceivableDebt"
         },
         {
@@ -243,16 +243,36 @@
           "section": "经营规划",
           "paths": ["/planning/strategy"],
           "status": "pending",
-          "source": "xT",
+          "source": "2026-10-22 原站可见目录确认",
           "name": "PlanningStrategy"
         },
         {
-          "title": "财务管理报表",
-          "section": "财务管理报表",
-          "paths": [],
           "status": "pending",
-          "source": "分类元数据",
-          "note": "仅分类线索，不能据此确认独立页面或页面数。"
+          "source": "2026-10-22 原站可见目录确认",
+          "section": "财务管理报表",
+          "paths": ["/workspace/finance/management-report"],
+          "title": "管理报表"
+        },
+        {
+          "status": "pending",
+          "source": "2026-10-22 原站可见目录确认",
+          "section": "财务管理报表",
+          "paths": ["/workspace/finance/cashflow-reconciliation"],
+          "title": "利润与现金勾稽"
+        },
+        {
+          "status": "pending",
+          "source": "2026-10-22 原站可见目录确认",
+          "section": "财务管理报表",
+          "paths": ["/workspace/finance/funds"],
+          "title": "资金日报"
+        },
+        {
+          "status": "pending",
+          "source": "2026-10-22 原站可见目录确认",
+          "section": "经营分析",
+          "paths": ["/zichanguanli/tmall"],
+          "title": "天猫普通财务资产管理"
         }
       ]
     },
@@ -711,10 +731,26 @@
       "status": "pending",
       "batch": "phase-1"
     },
-    { "path": "/register", "purpose": "注册路由", "status": "pending" },
-    { "path": "/social-callback", "purpose": "登录回调", "status": "pending" },
-    { "path": "/401", "purpose": "无权限路由", "status": "pending" },
-    { "path": "/:pathMatch(.*)*", "purpose": "兜底路由", "status": "pending" },
+    {
+      "path": "/register",
+      "purpose": "注册路由",
+      "status": "pending"
+    },
+    {
+      "path": "/social-callback",
+      "purpose": "登录回调",
+      "status": "pending"
+    },
+    {
+      "path": "/401",
+      "purpose": "无权限路由",
+      "status": "pending"
+    },
+    {
+      "path": "/:pathMatch(.*)*",
+      "purpose": "兜底路由",
+      "status": "pending"
+    },
     {
       "path": "/redirect/:path(.*)",
       "purpose": "重定向辅助路由",
@@ -794,5 +830,13 @@
     "使用本地模拟或本地持久化完成经确认的功能，不依赖原站凭据或原站业务数据。",
     "核对成功、加载、空态、错误与权限状态；对照验收通过才启用入口。",
     "按模块验收并更新状态，候选条目数不能当作已还原页面数。"
-  ]
+  ],
+  "runtimeVerification": {
+    "date": "2026-10-22",
+    "finance": {
+      "confirmedEntries": 11,
+      "available": ["公司经营总览", "核算中心", "费用管理"],
+      "limits": "本地经营汇总及月度费用来源；ERP订单、平台账单、目标和人员部门关联尚未接入。"
+    }
+  }
 }

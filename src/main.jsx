@@ -38,6 +38,9 @@ import Dashboard from "./pages/Dashboard";
 import Records from "./pages/Records";
 import Imports from "./pages/Imports";
 import Users from "./pages/Users";
+import Expenses from "./pages/Expenses";
+import Accounting from "./pages/Accounting";
+import CompanyFinance from "./pages/CompanyFinance";
 import { panelKeys, visitTab, closeTab } from "./workbench.mjs";
 import catalog from "./reference-catalog.json";
 import "./styles.css";
@@ -52,6 +55,13 @@ const pageDefinitions = {
   },
   quick: { title: "快捷工作", group: "workbench", icon: Grid2X2 },
   records: { title: "经营明细", group: "finance", icon: FileText },
+  financeCompany: {
+    title: "公司经营总览",
+    group: "finance",
+    icon: ChartNoAxesCombined,
+  },
+  financeAccounting: { title: "核算中心", group: "finance", icon: Database },
+  financeExpenses: { title: "费用管理", group: "finance", icon: FileText },
   imports: { title: "数据导入", group: "system", icon: Upload, admin: true },
   users: {
     title: "团队与权限",
@@ -78,6 +88,9 @@ const routeActions = {
   "/workspace/owner": "overview",
   "/workspace/quick": "quick",
   "/workspace/settings": "settings",
+  "/shujufenxi": "financeCompany",
+  "/caiwuduizhang/erphesaun": "financeAccounting",
+  "/caiwuduizhang/expense": "financeExpenses",
 };
 function App() {
   const [auth, setAuth] = useState(null),
@@ -213,6 +226,12 @@ function App() {
     ],
     [],
   );
+  function openDirectory(group) {
+    setDirectory(group);
+    setExpanded(false);
+    setProfile(false);
+    setTabMenu(false);
+  }
   function navigate(target) {
     if (target === "settings") {
       setDirectory(null);
@@ -354,8 +373,7 @@ function App() {
                 title={group.title}
                 className={activeGroup === group.id ? "selected" : ""}
                 onClick={() => {
-                  setDirectory(group.id);
-                  setExpanded(false);
+                  openDirectory(group.id);
                 }}
               >
                 <Icon size={21} />
@@ -389,6 +407,17 @@ function App() {
             </button>
             <div className="reference-breadcrumb">
               <button onClick={() => navigate("home")}>工作台</button>
+              {activeGroup !== "workbench" && (
+                <>
+                  <span>/</span>
+                  <button onClick={() => openDirectory(activeGroup)}>
+                    {
+                      catalog.groups.find((group) => group.id === activeGroup)
+                        ?.title
+                    }
+                  </button>
+                </>
+              )}
               <span>/</span>
               <b>{pageDefinitions[current].title}</b>
             </div>
@@ -396,7 +425,7 @@ function App() {
               <button
                 className="toolbar-directory"
                 aria-label="打开当前模块页面目录"
-                onClick={() => setDirectory(activeGroup)}
+                onClick={() => openDirectory(activeGroup)}
               >
                 <Grid2X2 size={15} />
                 目录
@@ -581,6 +610,32 @@ function App() {
                 />
               )
             )
+          ) : current === "financeCompany" ? (
+            <CompanyFinance
+              user={user}
+              revision={revision}
+              navigate={navigate}
+              onRecords={(scope, period) => {
+                setFilters({
+                  start: period.start,
+                  end: period.end,
+                  channel: "",
+                });
+                onRecords(scope);
+              }}
+            />
+          ) : current === "financeAccounting" ? (
+            <Accounting
+              user={user}
+              revision={revision}
+              onChanged={() => setRevision((value) => value + 1)}
+            />
+          ) : current === "financeExpenses" ? (
+            <Expenses
+              user={user}
+              revision={revision}
+              onChanged={() => setRevision((value) => value + 1)}
+            />
           ) : current === "records" ? (
             <>
               <Filters
@@ -645,7 +700,7 @@ function App() {
                   return (
                     <button
                       key={group.id}
-                      onClick={() => setDirectory(group.id)}
+                      onClick={() => openDirectory(group.id)}
                     >
                       <Icon size={20} />
                       <div>
@@ -669,7 +724,14 @@ function App() {
           className="directory-dialog"
         >
           <div className="directory-note">
-            已还原的入口可直接使用，其余条目将在后续批次逐项还原。
+            本模块已启用{" "}
+            {
+              directoryGroup.entries.filter((entry) =>
+                entry.paths.some((path) => routeActions[path]),
+              ).length
+            }{" "}
+            / {directoryGroup.entries.length}{" "}
+            个入口；标注“待还原”的功能尚未开发完成。
           </div>
           {Object.entries(
             Object.groupBy(
