@@ -1,0 +1,798 @@
+{
+  "schemaVersion": 1,
+  "title": "科然洞察公开前端静态候选目录",
+  "generatedAt": "2026-10-22",
+  "scope": "公开前端脚本的静态目录；候选不等于已验证页面，不证明运行、权限或业务行为。",
+  "sources": {
+    "navigation": "reference-user.js（仅作惰性 AST 解析，未执行）",
+    "navigationSha256": "f8601af6a436c93b24ac6531e5a80fa243e486af72821eba436d479b71cf4b07",
+    "definitions": [
+      "Ab：11 个模块",
+      "jb：35 条分类匹配规则",
+      "xT：12 个产品/规划注册定义",
+      "TT：工作台注册",
+      "MS：6 个静态部门模板",
+      "KS/VS：视觉工作台外链"
+    ],
+    "dynamicMenu": "公开脚本声明从 /system/menu/getRouters 获取动态菜单；本目录未请求或收录该接口的业务数据。"
+  },
+  "reaEvidence": {
+    "package": "rea-agents",
+    "version": "6.7.0",
+    "provider": "rea-javascript-application",
+    "providerVersion": "1",
+    "operation": "analyze_javascript_application",
+    "evidenceId": "ev_01daffa02cc8643f0c0f7fba048e127a886ea0dfc966739abc86aa6fe40ebb17",
+    "actualAnalyzedSources": [
+      "OwnerDashboard.js",
+      "CompanyWorkspace.js",
+      "login.js"
+    ],
+    "outsideSemanticAnalysis": ["user.js"],
+    "navigationInventoryMethod": "另用 REA 本地依赖 @babel/parser 对 reference-user.js 作纯静态 AST 解析；模块分类结果不是上述 REA 语义分析已覆盖的结果。",
+    "limitations": [
+      "选定 3 个源文件，另 1 个清单文件未纳入语义分析。",
+      "图覆盖不完整，未解析的动态表达式和外部依赖仍未知。",
+      "静态导入、路由和关系候选不证明运行时执行、页面可达或行为等价。",
+      "未执行原站脚本或 bundle bootstrap，未调用原站接口。",
+      "这里只保留摘要，不纳入原始压缩脚本、完整证据、账号、原站业务数据或私有截图。"
+    ]
+  },
+  "statusPolicy": {
+    "pending": "待还原；本目录的全部候选均尚未逐页验证与验收。",
+    "directoryBehavior": "禁用未实现入口，显示待还原；不要用占位内容冒充已还原功能。",
+    "pathSemantics": "以 / 开头为脚本明确声明或静态合成的站内路径；无 / 前缀为菜单匹配片段，父级路径未知；https:// 为外链。不得把匹配片段自动当作已验证 URL。",
+    "titleSemantics": "title 为目录展示名，titleMatches 为原脚本的匹配标题集合；集合不证明每个名称是独立页面或互为路由别名。",
+    "emptyPaths": "只恢复到标题或分类线索，未恢复可靠路径。"
+  },
+  "firstBatch": {
+    "id": "phase-1",
+    "title": "应用框架、登录与老板工作台",
+    "status": "pending",
+    "scope": [
+      {
+        "id": "shell",
+        "title": "应用框架与 11 模块目录",
+        "paths": [],
+        "status": "pending"
+      },
+      {
+        "id": "login",
+        "title": "登录",
+        "paths": ["/login"],
+        "status": "pending"
+      },
+      {
+        "id": "ownerDashboard",
+        "title": "老板工作台",
+        "paths": ["/workspace/owner"],
+        "status": "pending",
+        "source": "CompanyWorkspace.js 静态包装引用 OwnerDashboard.js"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "id": "workbench",
+      "title": "工作台",
+      "description": "经营指标、责任范围与异常提醒",
+      "section": "个人工作",
+      "entries": [
+        {
+          "title": "工作台首页",
+          "section": "工作入口",
+          "paths": ["/index"],
+          "status": "pending",
+          "source": "jb + 显式路由",
+          "titleMatches": ["首页", "工作台"],
+          "pathMatches": ["index"]
+        },
+        {
+          "title": "老板工作台",
+          "section": "公司工作",
+          "paths": ["/workspace/owner"],
+          "status": "pending",
+          "source": "TT",
+          "name": "CompanyWorkspace",
+          "batch": "phase-1"
+        },
+        {
+          "title": "销售工作台",
+          "section": "业务工作台",
+          "paths": ["/workspace/departments/sales"],
+          "status": "pending",
+          "source": "TT + MS 静态合成"
+        },
+        {
+          "title": "运营工作台",
+          "section": "业务工作台",
+          "paths": ["/workspace/departments/operations"],
+          "status": "pending",
+          "source": "TT + MS 静态合成"
+        },
+        {
+          "title": "供应链工作台",
+          "section": "业务工作台",
+          "paths": ["/workspace/departments/supply"],
+          "status": "pending",
+          "source": "TT + MS 静态合成"
+        },
+        {
+          "title": "财务工作台",
+          "section": "业务工作台",
+          "paths": ["/workspace/departments/finance"],
+          "status": "pending",
+          "source": "TT + MS 静态合成"
+        },
+        {
+          "title": "客服售后工作台",
+          "section": "业务工作台",
+          "paths": ["/workspace/departments/service"],
+          "status": "pending",
+          "source": "TT + MS 静态合成"
+        },
+        {
+          "title": "课程交付工作台",
+          "section": "业务工作台",
+          "paths": ["/workspace/departments/course"],
+          "status": "pending",
+          "source": "TT + MS 静态合成"
+        },
+        {
+          "title": "我的工作台",
+          "section": "个人与快捷",
+          "paths": ["/workspace/personal"],
+          "status": "pending",
+          "source": "TT",
+          "name": "PersonalWorkspace"
+        },
+        {
+          "title": "快捷工作",
+          "section": "个人与快捷",
+          "paths": ["/workspace/quick"],
+          "status": "pending",
+          "source": "TT",
+          "name": "QuickWork"
+        },
+        {
+          "title": "工作台管理",
+          "section": "管理员配置",
+          "paths": ["/workspace/manage"],
+          "status": "pending",
+          "source": "TT",
+          "name": "WorkspaceManagement"
+        },
+        {
+          "title": "工作台配置",
+          "section": "管理员配置",
+          "paths": ["/workspace/settings"],
+          "status": "pending",
+          "source": "TT",
+          "name": "WorkspaceSettings"
+        },
+        {
+          "title": "个人中心",
+          "section": "个人与快捷",
+          "paths": ["/user/profile"],
+          "status": "pending",
+          "source": "父子路由静态拼接；归入个人工作供目录使用",
+          "name": "Profile"
+        }
+      ]
+    },
+    {
+      "id": "finance",
+      "title": "经营财务",
+      "description": "公司经营、利润费用、资金与资产",
+      "section": "业务经营",
+      "entries": [
+        {
+          "title": "公司经营总览",
+          "section": "公司经营",
+          "paths": ["shujufenxi"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["数据总览", "数据分析"]
+        },
+        {
+          "title": "核算中心",
+          "section": "利润与费用",
+          "paths": ["erphesaun"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["核算中心", "ERP核算中心"]
+        },
+        {
+          "title": "费用管理",
+          "section": "利润与费用",
+          "paths": ["expense"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "资产总览",
+          "section": "资金与资产",
+          "paths": ["zichanzonglan"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "账户资产",
+          "section": "资金与资产",
+          "paths": ["zhanghuzichan"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": [
+            "账户资产",
+            "账户余额",
+            "天猫资产",
+            "天猫财务资产",
+            "天猫平台资产"
+          ]
+        },
+        {
+          "title": "欠款详情",
+          "section": "财务办理",
+          "paths": ["qiankuanxiangqing", "qiankaun"],
+          "status": "pending",
+          "source": "jb",
+          "name": "ReceivableDebt"
+        },
+        {
+          "title": "战略项目与预测",
+          "section": "经营规划",
+          "paths": ["/planning/strategy"],
+          "status": "pending",
+          "source": "xT",
+          "name": "PlanningStrategy"
+        },
+        {
+          "title": "财务管理报表",
+          "section": "财务管理报表",
+          "paths": [],
+          "status": "pending",
+          "source": "分类元数据",
+          "note": "仅分类线索，不能据此确认独立页面或页面数。"
+        }
+      ]
+    },
+    {
+      "id": "product",
+      "title": "产品中心",
+      "description": "产品档案、选品研发、利润与生命周期",
+      "section": "业务经营",
+      "entries": [
+        {
+          "title": "产品经营总览",
+          "section": "产品经营",
+          "paths": ["/product-center/overview"],
+          "status": "pending",
+          "source": "xT",
+          "name": "ProductCenterOverview"
+        },
+        {
+          "title": "产品档案",
+          "section": "产品经营",
+          "paths": ["/product-center/catalog"],
+          "status": "pending",
+          "source": "xT",
+          "name": "ProductCenterCatalog"
+        },
+        {
+          "title": "产品利润结构",
+          "section": "产品经营",
+          "paths": ["/product-center/profit"],
+          "status": "pending",
+          "source": "xT",
+          "name": "ProductCenterProfit"
+        },
+        {
+          "title": "选品规划",
+          "section": "产品发展",
+          "paths": ["/product-center/selection"],
+          "status": "pending",
+          "source": "xT",
+          "name": "ProductCenterSelection"
+        },
+        {
+          "title": "研发与新品",
+          "section": "产品发展",
+          "paths": ["/product-center/development"],
+          "status": "pending",
+          "source": "xT",
+          "name": "ProductCenterDevelopment"
+        },
+        {
+          "title": "产品生命周期",
+          "section": "产品发展",
+          "paths": ["/product-center/lifecycle"],
+          "status": "pending",
+          "source": "xT",
+          "name": "ProductCenterLifecycle"
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "title": "运营增长",
+      "description": "店铺经营、链接表现与市场分析",
+      "section": "业务经营",
+      "entries": [
+        {
+          "title": "店铺经营",
+          "section": "店铺经营",
+          "paths": ["dianpushuju"],
+          "status": "pending",
+          "source": "jb + 静态补充路由",
+          "titleMatches": ["店铺数据"],
+          "name": "OnlineShopData"
+        },
+        {
+          "title": "店铺资料",
+          "section": "店铺经营",
+          "paths": ["dianpuguanli"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["店铺管理"]
+        },
+        {
+          "title": "店铺目标",
+          "section": "店铺经营",
+          "paths": ["dianpumubiao"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "链接经营",
+          "section": "链接经营",
+          "paths": ["lianjieshujv", "lianjieshuju"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["链接数据"]
+        },
+        {
+          "title": "商品链接资料",
+          "section": "链接经营",
+          "paths": ["lianjieguanli"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["链接管理", "商品链接管理"]
+        },
+        {
+          "title": "推广计划管理",
+          "section": "推广管理",
+          "paths": [],
+          "status": "pending",
+          "source": "路由元数据",
+          "name": "OperationPromotionPlans",
+          "note": "源对象路径为空，完整地址依赖动态菜单。"
+        },
+        {
+          "title": "达摩盘排行",
+          "section": "市场与竞品",
+          "paths": ["dmp"],
+          "status": "pending",
+          "source": "jb"
+        }
+      ]
+    },
+    {
+      "id": "customer",
+      "title": "销售客户",
+      "description": "销售经营、客户机会与客服售后",
+      "section": "业务经营",
+      "entries": [
+        {
+          "title": "销售经营诊断",
+          "section": "销售经营",
+          "paths": ["jingyingzhenduan"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["经营诊断"],
+          "name": "SalesOverviewDiagnosis"
+        },
+        {
+          "title": "客户资产",
+          "section": "客户经营",
+          "paths": ["/planning/customerAssets"],
+          "status": "pending",
+          "source": "xT",
+          "name": "PlanningCustomerAssets"
+        },
+        {
+          "title": "客户机会",
+          "section": "客户经营",
+          "paths": ["kehujihui"],
+          "status": "pending",
+          "source": "jb",
+          "name": "SalesOverviewCustomerOpportunity"
+        },
+        {
+          "title": "微信转化",
+          "section": "客户经营",
+          "paths": ["wechat"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "品牌与服务标准",
+          "section": "客服与售后",
+          "paths": ["/planning/brandService"],
+          "status": "pending",
+          "source": "xT",
+          "name": "PlanningBrandService"
+        },
+        {
+          "title": "线上接待",
+          "section": "客服与售后",
+          "paths": ["xianshangjiedai"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "服务质量",
+          "section": "客服与售后",
+          "paths": ["fuwuzhiliang"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["服务与链接质量", "服务质量"],
+          "name": "SalesOverviewServiceQuality"
+        },
+        {
+          "title": "天猫体验分",
+          "section": "客服与售后",
+          "paths": ["tianmaotiyanjifen", "tianmaodianpupingtai"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["天猫体验分", "天猫店铺平台"]
+        },
+        {
+          "title": "退货分析",
+          "section": "客服与售后",
+          "paths": ["tuihuofenxi"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "销售协同",
+          "section": "销售协同",
+          "paths": ["xiaoshouxietong"],
+          "status": "pending",
+          "source": "jb",
+          "name": "SalesOverviewCollaboration"
+        }
+      ]
+    },
+    {
+      "id": "supply",
+      "title": "供应链",
+      "description": "库存资金、采购与供应商经营",
+      "section": "业务经营",
+      "entries": [
+        {
+          "title": "库存经营",
+          "section": "库存经营",
+          "paths": ["kucunliuzhuan"],
+          "status": "pending",
+          "source": "jb + 静态补充路由",
+          "titleMatches": ["库存流转"],
+          "name": "PurchaseInventoryFlow"
+        },
+        {
+          "title": "采购经营分析",
+          "section": "采购管理",
+          "paths": ["caigoufenxi"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["采购经营分析看板", "采购分析", "采购经营分析"]
+        },
+        {
+          "title": "供应商经营",
+          "section": "供应商经营",
+          "paths": ["gongyinglianjingying"],
+          "status": "pending",
+          "source": "jb + 静态补充路由",
+          "titleMatches": ["供应链经营"],
+          "name": "PurchaseSupplyChainBusiness"
+        }
+      ]
+    },
+    {
+      "id": "talent",
+      "title": "组织人效",
+      "description": "人员产出、目标绩效与组织配置",
+      "section": "业务经营",
+      "entries": [
+        {
+          "title": "人员业绩",
+          "section": "人效分析",
+          "paths": ["renyuanyeji"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "人员目标",
+          "section": "目标与绩效",
+          "paths": ["renyuanmubiao"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "部门管理",
+          "section": "组织与人才",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "岗位管理",
+          "section": "组织与人才",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "人才培养",
+          "section": "组织与人才",
+          "paths": ["/planning/talentDevelopment"],
+          "status": "pending",
+          "source": "xT",
+          "name": "PlanningTalentDevelopment"
+        }
+      ]
+    },
+    {
+      "id": "collaboration",
+      "title": "协同中心",
+      "description": "任务协作、通知与业务审批",
+      "section": "管理与支持",
+      "entries": [
+        {
+          "title": "通知中心",
+          "section": "通知与公告",
+          "paths": ["tongzhizhongxin"],
+          "status": "pending",
+          "source": "jb + 静态补充路由",
+          "name": "OperationNotificationCenter"
+        },
+        {
+          "title": "通知公告",
+          "section": "通知与公告",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "经营复盘",
+          "section": "经营改进",
+          "paths": ["/planning/businessReview"],
+          "status": "pending",
+          "source": "xT",
+          "name": "PlanningBusinessReview"
+        }
+      ]
+    },
+    {
+      "id": "dataAI",
+      "title": "知识与 AI",
+      "description": "分析方法、模板与 AI 助手",
+      "section": "管理与支持",
+      "entries": [
+        {
+          "title": "经营知识库",
+          "section": "经营知识",
+          "paths": ["/planning/knowledge"],
+          "status": "pending",
+          "source": "xT",
+          "name": "PlanningKnowledge"
+        },
+        {
+          "title": "分析模板",
+          "section": "分析方法",
+          "paths": ["/intelligent-analysis/templates"],
+          "status": "pending",
+          "source": "jb + 父子显式路由",
+          "name": "IntelligentAnalysis"
+        },
+        {
+          "title": "AI 会话",
+          "section": "AI 助手",
+          "paths": ["aichat"],
+          "status": "pending",
+          "source": "jb",
+          "titleMatches": ["AI会话", "AI 会话", "Codex 对话"],
+          "note": "标题匹配与显式 Codex 对话路由的同一性未确认。"
+        },
+        {
+          "title": "Codex 对话",
+          "section": "AI 助手",
+          "paths": ["/intelligent-analysis/chat"],
+          "status": "pending",
+          "source": "父子显式路由",
+          "name": "CodexChat"
+        }
+      ]
+    },
+    {
+      "id": "visualWorkbench",
+      "title": "视觉工作台",
+      "description": "无线画布与视觉创作",
+      "section": "管理与支持",
+      "entries": [
+        {
+          "title": "视觉工作台",
+          "section": "视觉创作",
+          "paths": ["https://wxhb.aikeran.com/"],
+          "status": "pending",
+          "source": "KS + VS",
+          "external": true,
+          "note": "原脚本含新窗口与单点登录衔接；本目录只保留公开目标地址，不含凭据或实际登录行为。"
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "title": "系统管理",
+      "description": "数据配置、权限、规则与系统维护",
+      "section": "管理与支持",
+      "entries": [
+        {
+          "title": "RPA账号管理",
+          "section": "数据管理",
+          "paths": ["rpaaccountmanagement"],
+          "status": "pending",
+          "source": "jb"
+        },
+        {
+          "title": "文件管理",
+          "section": "数据管理",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "OSS对象存储",
+          "section": "数据管理",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选",
+          "titleMatches": ["OSS对象存储", "对象存储"],
+          "note": "两标题暂合并为一个候选，是否同一页面待验证。"
+        },
+        {
+          "title": "字典管理",
+          "section": "规则与字典",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "参数设置",
+          "section": "规则与字典",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "用户管理",
+          "section": "用户与权限",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "角色管理",
+          "section": "用户与权限",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "菜单管理",
+          "section": "用户与权限",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        },
+        {
+          "title": "客户端管理",
+          "section": "用户与权限",
+          "paths": [],
+          "status": "pending",
+          "source": "jb 标题匹配候选"
+        }
+      ]
+    }
+  ],
+  "auxiliaryRoutes": [
+    {
+      "path": "/login",
+      "purpose": "登录",
+      "status": "pending",
+      "batch": "phase-1"
+    },
+    { "path": "/register", "purpose": "注册路由", "status": "pending" },
+    { "path": "/social-callback", "purpose": "登录回调", "status": "pending" },
+    { "path": "/401", "purpose": "无权限路由", "status": "pending" },
+    { "path": "/:pathMatch(.*)*", "purpose": "兜底路由", "status": "pending" },
+    {
+      "path": "/redirect/:path(.*)",
+      "purpose": "重定向辅助路由",
+      "status": "pending"
+    },
+    {
+      "path": "/intelligent-analysis",
+      "redirect": "/intelligent-analysis/templates",
+      "status": "pending"
+    },
+    {
+      "path": "/workspace/access",
+      "redirect": "/workspace/settings",
+      "status": "pending",
+      "hidden": true
+    },
+    {
+      "path": "/workspace/manager",
+      "redirect": "/index",
+      "status": "pending",
+      "hidden": true
+    },
+    {
+      "path": "/workspace/boards",
+      "redirect": "/index",
+      "status": "pending",
+      "hidden": true
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-1",
+      "title": "应用框架、登录与老板工作台",
+      "groups": ["workbench"],
+      "status": "pending",
+      "scope": "仅 shell/login/ownerDashboard；其余工作台入口保留待还原状态。"
+    },
+    {
+      "id": "phase-2",
+      "title": "工作台体系与产品中心",
+      "groups": ["workbench", "product"],
+      "status": "pending",
+      "scope": "部门/个人/快捷工作台、配置入口与产品 6 场景。"
+    },
+    {
+      "id": "phase-3",
+      "title": "经营财务",
+      "groups": ["finance"],
+      "status": "pending",
+      "scope": "先确认动态菜单完整路径与字段口径，再实现财务交互及经营规划。"
+    },
+    {
+      "id": "phase-4",
+      "title": "运营、销售客户与供应链",
+      "groups": ["operations", "customer", "supply"],
+      "status": "pending",
+      "scope": "按店铺、链接、客户、服务、库存、采购、供应商依次验收。"
+    },
+    {
+      "id": "phase-5",
+      "title": "组织、协同与知识 AI",
+      "groups": ["talent", "collaboration", "dataAI"],
+      "status": "pending",
+      "scope": "补证标题候选与完整路径，完成目标绩效、通知复盘、知识模板和会话。"
+    },
+    {
+      "id": "phase-6",
+      "title": "视觉工作台与系统管理",
+      "groups": ["visualWorkbench", "system"],
+      "status": "pending",
+      "scope": "独立确认视觉外链整合范围；完成用户权限、字典、文件与数据管理。"
+    }
+  ],
+  "acceptance": [
+    "逐页确认公开可见界面、完整路径及导航归属。",
+    "记录筛选、排序、分页、日期范围、详情、导入导出等实际存在的交互，未观察到的行为保持未知。",
+    "使用本地模拟或本地持久化完成经确认的功能，不依赖原站凭据或原站业务数据。",
+    "核对成功、加载、空态、错误与权限状态；对照验收通过才启用入口。",
+    "按模块验收并更新状态，候选条目数不能当作已还原页面数。"
+  ]
+}

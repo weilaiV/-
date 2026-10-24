@@ -1,0 +1,32 @@
+{
+  "name": "keran-insights",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build",
+    "start": "node server/index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check server/app.mjs && node --check server/db.mjs && node --check server/domain.mjs && node --check server/finance.mjs && node --check server/finance-domain.mjs && node --check server/inventory-domain.mjs && node --check server/inventory-db.mjs && node --check server/inventory-xlsx.mjs && node --check server/inventory.mjs && node --check scripts/import-inventory.mjs && node --check server/security.mjs && node --check server/index.mjs",
+    "seed:demo": "node scripts/seed-demo.mjs",
+    "inventory:import": "node scripts/import-inventory.mjs"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.15",
+    "csv-parse": "^7.0.3",
+    "fflate": "^0.8.3",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "read-excel-file": "^6.0.3",
+    "unzipper": "^0.12.5"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.0",
+    "vite": "^7.1.0"
+  }
+}
