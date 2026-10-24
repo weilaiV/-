@@ -4,6 +4,7 @@ import { resolve, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { openDatabase, insertBatch } from "./db.mjs";
 import { handleFinance } from "./finance.mjs";
+import { handleInventory } from "./inventory.mjs";
 import {
   AppError,
   parseCsv,
@@ -319,6 +320,20 @@ export function createApp({
       }
       const user = getSession(db, req);
       if (!user) throw new AppError("请先登录", 401);
+      if (
+        await handleInventory({
+          db,
+          req,
+          res,
+          url,
+          path,
+          method,
+          user,
+          bodyJson,
+          send,
+        })
+      )
+        return;
       if (
         await handleFinance({
           db,

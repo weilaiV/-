@@ -41,6 +41,7 @@ import Users from "./pages/Users";
 import Expenses from "./pages/Expenses";
 import Accounting from "./pages/Accounting";
 import CompanyFinance from "./pages/CompanyFinance";
+import Inventory from "./pages/Inventory";
 import { panelKeys, visitTab, closeTab } from "./workbench.mjs";
 import catalog from "./reference-catalog.json";
 import "./styles.css";
@@ -55,6 +56,7 @@ const pageDefinitions = {
   },
   quick: { title: "快捷工作", group: "workbench", icon: Grid2X2 },
   records: { title: "经营明细", group: "finance", icon: FileText },
+  inventory: { title: "库存经营", group: "supply", icon: ShoppingCart },
   financeCompany: {
     title: "公司经营总览",
     group: "finance",
@@ -84,6 +86,7 @@ const moduleIcons = {
   system: Settings,
 };
 const routeActions = {
+  kucunliuzhuan: "inventory",
   "/index": "home",
   "/workspace/owner": "overview",
   "/workspace/quick": "quick",
@@ -581,7 +584,7 @@ function App() {
               </button>
             </div>
           )}
-          {data?.hasDemo && (
+          {data?.hasDemo && current !== "inventory" && (
             <div className="reference-demo">
               <Info size={13} />
               <span>合成演示数据 · 非真实经营数据</span>
@@ -610,6 +613,12 @@ function App() {
                 />
               )
             )
+          ) : current === "inventory" ? (
+            <Inventory
+              user={user}
+              revision={revision}
+              onChanged={() => setRevision((value) => value + 1)}
+            />
           ) : current === "financeCompany" ? (
             <CompanyFinance
               user={user}

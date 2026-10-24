@@ -493,7 +493,7 @@
           "title": "库存经营",
           "section": "库存经营",
           "paths": ["kucunliuzhuan"],
-          "status": "pending",
+          "status": "available-local-inventory",
           "source": "jb + 静态补充路由",
           "titleMatches": ["库存流转"],
           "name": "PurchaseInventoryFlow"

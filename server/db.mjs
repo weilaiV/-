@@ -3,6 +3,7 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { AppError } from "./domain.mjs";
 import { expenseColumns } from "../src/finance-schema.mjs";
+import { ensureInventorySchema } from "./inventory-db.mjs";
 export function openDatabase(path) {
   if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
   const db = new DatabaseSync(path);
@@ -54,6 +55,7 @@ export function openDatabase(path) {
       })),
     ),
   );
+  ensureInventorySchema(db);
   return db;
 }
 export function insertBatch(db, rows, filename, userId, isDemo = false) {
