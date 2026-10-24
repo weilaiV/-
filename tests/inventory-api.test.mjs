@@ -86,6 +86,33 @@ function database(t) {
 }
 const status = (code) => (error) => error.status === code;
 
+test("image policy allows inventory CDN images and keeps scripts and connections same-origin", async (t) => {
+  const app = createApp({ databasePath: ":memory:" });
+  await new Promise((resolve) => app.server.listen(0, "127.0.0.1", resolve));
+  t.after(async () => {
+    await new Promise((resolve) => app.server.close(resolve));
+    app.close();
+  });
+  const response = await fetch(
+    `http://127.0.0.1:${app.server.address().port}/api/auth/status`,
+  );
+  const policy = response.headers.get("content-security-policy");
+  const imagePolicy = policy
+    .split(";")
+    .find((part) => part.trim().startsWith("img-src "));
+  for (const origin of [
+    "https://img.alicdn.com",
+    "https://cbu01.alicdn.com",
+    "https://img.pddpic.com",
+    "https://images.sursung.com",
+    "https://images-erp.sursung.com",
+  ])
+    assert.ok(imagePolicy.split(/\s+/).includes(origin));
+  assert.match(policy, /script-src 'self';/);
+  assert.match(policy, /connect-src 'self';/);
+  assert.doesNotMatch(imagePolicy, /https:;|\*/);
+});
+
 test("inventory migration adds tables without changing existing business or user data", (t) => {
   const db = database(t);
   db.prepare(

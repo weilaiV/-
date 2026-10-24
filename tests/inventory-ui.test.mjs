@@ -13,6 +13,52 @@ import {
   formatImportedAt,
 } from "../src/inventory-ui.mjs";
 
+test("inventory thumbnails render approved images without leaking page referrers and label missing images", async () => {
+  const result = await build({
+    entryPoints: [
+      new URL(
+        "../src/components/InventoryThumbnail.jsx",
+        import.meta.url,
+      ).pathname.replace(/^\/(?=[A-Za-z]:)/, ""),
+    ],
+    bundle: true,
+    write: false,
+    format: "cjs",
+    platform: "node",
+    external: ["react", "react-dom"],
+  });
+  const module = { exports: {} };
+  new Function("require", "module", "exports", result.outputFiles[0].text)(
+    createRequire(import.meta.url),
+    module,
+    module.exports,
+  );
+  const Thumbnail = module.exports.default;
+  const render = (imageUrl) =>
+    renderToStaticMarkup(
+      React.createElement(Thumbnail, {
+        item: { sku: "DEMO-01", name: "合成商品", imageUrl },
+      }),
+    );
+  const valid = render("https://img.alicdn.com/synthetic-product.jpg");
+  assert.match(valid, /<img\b/);
+  assert.match(valid, /alt="合成商品"/);
+  assert.match(valid, /loading="lazy"/);
+  assert.match(valid, /referrerPolicy="no-referrer"/i);
+  assert.match(valid, /width="52"/);
+  assert.match(valid, /height="52"/);
+  for (const url of [
+    null,
+    "javascript:alert(1)",
+    "https://unknown.test/photo.png",
+    "https://user:password@img.alicdn.com/photo.png",
+  ]) {
+    const empty = render(url);
+    assert.doesNotMatch(empty, /<img\b/);
+    assert.match(empty, /暂无图片/);
+  }
+});
+
 test("missing quantities stay distinct from genuine zero and negative days", () => {
   assert.equal(formatQuantity(null), "未提供");
   assert.equal(formatQuantity(undefined), "未提供");
@@ -24,7 +70,10 @@ test("missing quantities stay distinct from genuine zero and negative days", () 
 
 test("SQLite UTC import timestamps display in Shanghai time", () => {
   assert.match(formatImportedAt("2025-01-01 00:00:00"), /2025.*1.*1.*08:00:00/);
-  assert.equal(formatImportedAt("2025-01-01 00:00:00"), formatImportedAt("2025-01-01T00:00:00Z"));
+  assert.equal(
+    formatImportedAt("2025-01-01 00:00:00"),
+    formatImportedAt("2025-01-01T00:00:00Z"),
+  );
   assert.equal(formatImportedAt(null), "未提供");
 });
 

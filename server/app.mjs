@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { openDatabase, insertBatch } from "./db.mjs";
 import { handleFinance } from "./finance.mjs";
 import { handleInventory } from "./inventory.mjs";
+import { INVENTORY_IMAGE_ORIGINS } from "../src/inventory-images.mjs";
 import {
   AppError,
   parseCsv,
@@ -180,7 +181,7 @@ export function createApp({
     res.setHeader("Referrer-Policy", "same-origin");
     res.setHeader(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+      `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: ${INVENTORY_IMAGE_ORIGINS.join(" ")}; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`,
     );
     try {
       if (

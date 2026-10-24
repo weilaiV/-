@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { api, today } from "../api";
 import Dialog from "../components/Dialog";
+import InventoryThumbnail from "../components/InventoryThumbnail";
 import { Empty, ErrorBox, Loading, Pagination } from "../components/ui";
 import {
   arrayBufferToBase64,
@@ -535,6 +536,9 @@ export default function Inventory({
           </span>
         </div>
       </section>
+      <p className="inv-history-note">
+        建议每天固定时间导入最新表格，批次日期选择导出当天。每次导入保留独立快照，不覆盖前一天；可在上方切换历史批次，默认显示最近导入的一份。
+      </p>
       <div className="inv-scope">
         <span>{filtered ? "当前筛选范围" : "当前完整快照"}</span>
         {data && snapshot && (
@@ -727,6 +731,7 @@ export default function Inventory({
                   <thead>
                     <tr>
                       {[
+                        "图片",
                         "商品编码",
                         "商品名称 / 规格",
                         "款式",
@@ -740,7 +745,18 @@ export default function Inventory({
                         "原表更新时间",
                         "",
                       ].map((label, index) => (
-                        <th key={index}>{label}</th>
+                        <th
+                          key={index}
+                          className={
+                            label === "图片"
+                              ? "inv-image-cell"
+                              : label === "标签"
+                                ? "inv-tags-cell"
+                                : undefined
+                          }
+                        >
+                          {label}
+                        </th>
                       ))}
                     </tr>
                   </thead>
@@ -749,6 +765,9 @@ export default function Inventory({
                       const flags = flagsFor(item);
                       return (
                         <tr key={item.id || item.sku}>
+                          <td className="inv-image-cell">
+                            <InventoryThumbnail item={item} />
+                          </td>
                           <td className="inv-sku">{text(item.sku)}</td>
                           <td className="inv-product">
                             <strong>{text(item.name)}</strong>
@@ -764,7 +783,7 @@ export default function Inventory({
                             </small>
                           </td>
                           <td>{text(item.styleCode)}</td>
-                          <td>
+                          <td className="inv-tags-cell">
                             <Tags item={item} />
                           </td>
                           <td
